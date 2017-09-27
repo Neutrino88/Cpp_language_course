@@ -1,1 +1,1 @@
-# Изучение языка C++ 14
+# Parser of ini-files

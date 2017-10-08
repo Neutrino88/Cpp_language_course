@@ -12,18 +12,18 @@ class MyIniParser {
 	map <string, map<string, string>> _fileMap;
 
 public:
-	MyIniParser(string iniFileName = "file.ini" ) {
+	MyIniParser(const string & iniFileName = "file.ini" ) {
 		_fileName = iniFileName;
 	}
 	
 	// Open and read file
-	bool loadFromFile() {
+	bool loadFromFile(void) {
 		string spaces("[		[:space:][:blank:]\t\r\v]*");
 
 		regex spacesLine("^" + spaces + "$");
 		regex commentLine("^" + spaces + "[#;].*$");
 		
-		regex secLine("^"+spaces+"\\[.*\\]"+spaces+"$");
+		regex secLine("^\\[.*\\]"+spaces+"$");
 		regex varLine("^.+=.+$");
 
 		// open file
@@ -67,7 +67,7 @@ public:
 	}
 
 	// Get value by SECTION and KEY
-	string getField(string section, string key, string defaultValue) {
+	string getField(const string & section, const string & key, const string & defaultValue) {
 		auto it = _fileMap.find(section);
 
 		if (it != _fileMap.end()) {
@@ -82,7 +82,7 @@ public:
 	}
 	
 	// Get all sections
-	vector<string> getSections() {
+	vector<string> getSections(void) {
 		vector<string> vecSections;
 		
 		for (auto i = _fileMap.begin(); i != _fileMap.end(); ++i) {
@@ -93,7 +93,7 @@ public:
 	}
 	
 	// Get all fields by SECTION
-	vector<string> getFields(string section){
+	vector<string> getFields(const string & section){
 		// get section map
 		auto it = _fileMap.find(section);
 		

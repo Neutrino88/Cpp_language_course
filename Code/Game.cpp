@@ -1,52 +1,48 @@
 #include "Game.h"
 
-Game::Game(const Human & player1, const Bot & player2):
-	player1(player1), player2(player2)
+Game::Game(Player* player1, Player * player2) 
+    : player1(player1)
+    , player2(player2)
 { }
 
 int Game::start(void) {
-	Shot shot;
-	Cell shotResult;
-	int shipCount;
+    Cell shot;
+    ShotResult shotResult;
+    bool shotFirstPl = false;
 
-	bool shotFirstPl = true;
-	
-	do {
-		do {
-			std::cout << "1 player:" << std::endl;
+    int ships1 = 10;
+    int ships2 = 10;
 
-			shotFirstPl = true;
-			shot = player1.doShot();
-			shipCount = player2.getShot(shot);
-			player1.setLastShotResult(shot.result);
+    do {
+        shotFirstPl = !shotFirstPl;
+        do {
+            std::cout << player1->getName() + ": " << std::endl;
+            
+            shot = player1->doShot();
+            shotResult = player2->getShot(shot);
+            player1->setLastShotResult(shotResult);
 
-			std::cout << "[" << static_cast<char>('A' + shot.y) << shot.x+1 << "] - " << (shot.result == CELL_WOUNDED_SHIP ? "Got" : "Missed") << std::endl << shipCount << std::endl;
+            if (shotFirstPl && shotResult == SHOTR_KILLED) {
+                --ships1;
+            }
+            if (!shotFirstPl && shotResult == SHOTR_KILLED) {
+                --ships2;
+            }
 
-			char a; std::cin >> a;
-		} while (shot.result == CELL_WOUNDED_SHIP);
+            std::cout << "[" << static_cast<char>('A' + shot.y) << shot.x + 1 << "] - ";
+            std::cout << (shotResult == SHOTR_KILLED ? "KILL" : (shotResult == SHOTR_WOUNDED ? "WOUNDED" : "MISSED")) << std::endl;
+        } while (ships1 > 0 && ships2 > 0 && (shotResult == CELL_WOUNDED_SHIP || shotResult == CELL_WHOLE_SHIP));
 
-		if (shipCount == 0) break; 
+        // swap players
+        Player* buff = player1;
+        player1 = player2;
+        player2 = buff;
+    } while (ships1 > 0 && ships2 > 0);
 
-		do {
-			std::cout << "2 player:" << std::endl;
+    if (!shotFirstPl)
+        std::cout << player1->getName() << " won!" << std::endl;
+    else
+        std::cout << player2->getName() << " won!" << std::endl;
 
-			shotFirstPl = false;
-			shot = player2.doShot();
-			shipCount = player1.getShot(shot);
-			player2.setLastShotResult(shot.result);
-
-			std::cout << "[" << static_cast<char>('A' + shot.y) << shot.x + 1 << "] - " << (shot.result == CELL_WOUNDED_SHIP ? "Got" : "Missed") << std::endl << shipCount << std::endl;
-			std::cout << shipCount << std::endl;
-
-			char a; std::cin >> a;
-		} while (shot.result == CELL_WOUNDED_SHIP);
-	} while (shipCount > 0);
-
-	if (shotFirstPl)
-		std::cout << "1 player said: '" << player1.victorySpeach() << "'" << std::endl;
-	else
-		std::cout << "2 player said: '" << player2.victorySpeach() << "'" << std::endl;
-
-	return 0;
+    return 0;
 }
-

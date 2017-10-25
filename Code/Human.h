@@ -2,16 +2,16 @@
 
 #include <iostream>
 #include "Player.h"
+#include <regex>
 
-class Human : public Player
+class Human 
+    : public Player
 {
-	void printFields(void) const;
+    void printFields(void) const;
 
 public:
-	Human(std::string victorySpeach = "I am winner!")
-		: Player(victorySpeach) 
-	{ }
+    Human(std::string name);
 
-	void Human::setLastShotResult(Cell result);
+    Cell doShot(void);
 };
 

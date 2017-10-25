@@ -25,55 +25,52 @@ protected:
 
     void fillCellAroundKilledShip(void) {
         // get lives of ship
-        int x = lastShot.x;
-        int y = lastShot.y;
+		Cell fcell(lastShot.x, lastShot.y);
+		Cell lcell(lastShot.x, lastShot.y);
 
-        int lx = x;
-        int ly = y;
-
-        enemyField.getFirstShipCell(x, y);
-        enemyField.getLastShipCell(lx, ly);
+        enemyField.getFirstShipCell(fcell);
+        enemyField.getLastShipCell(lcell);
 
         // one-cells ship
-        if (x == lx && y == ly) {
-            if (y > 0)                    enemyField.f[x][y - 1] = CELL_WATER;
-            if (y + 1 < FL_FIELD_SIZE)    enemyField.f[x][y + 1] = CELL_WATER;
-            if (x > 0)                    enemyField.f[x - 1][y] = CELL_WATER;
-            if (x + 1 < FL_FIELD_SIZE)    enemyField.f[x + 1][y] = CELL_WATER;
+        if (fcell.x == lcell.x && fcell.y == lcell.y) {
+            if (fcell.y > 0)                    enemyField.f[fcell.x][fcell.y - 1] = CELL_WATER;
+            if (fcell.y + 1 < FL_FIELD_SIZE)    enemyField.f[fcell.x][fcell.y + 1] = CELL_WATER;
+            if (fcell.x > 0)                    enemyField.f[fcell.x - 1][fcell.y] = CELL_WATER;
+			if (fcell.x + 1 < FL_FIELD_SIZE)    enemyField.f[fcell.x + 1][fcell.y] = CELL_WATER;
         }
         else {
             int dx = 0, dy = 0;
 
-            if (y < ly) {
+            if (fcell.y < lcell.y) {
                 dy = 1;
-                if (y > 0)                    enemyField.f[x][y - 1] = CELL_WATER;
-                if (ly + 1 < FL_FIELD_SIZE)   enemyField.f[x][ly + 1] = CELL_WATER;
+                if (fcell.y > 0)                   enemyField.f[fcell.x][fcell.y - 1] = CELL_WATER;
+                if (lcell.y + 1 < FL_FIELD_SIZE)   enemyField.f[fcell.x][lcell.y + 1] = CELL_WATER;
             }
 
-            if (x < lx) {
+            if (fcell.x < lcell.x) {
                 dx = 1;
-                if (x > 0)                    enemyField.f[x - 1][y] = CELL_WATER;
-                if (lx + 1 < FL_FIELD_SIZE)   enemyField.f[lx + 1][y] = CELL_WATER;
+                if (fcell.x > 0)                   enemyField.f[fcell.x - 1][fcell.y] = CELL_WATER;
+                if (lcell.x + 1 < FL_FIELD_SIZE)   enemyField.f[lcell.x + 1][fcell.y] = CELL_WATER;
             }
 
-            for (int i = 0; i <= max(lx - x, ly - y); ++i)
-                enemyField.f[x + dx * i][y + dy * i] = CELL_WHOLE_SHIP;
+            for (int i = 0; i <= max(lcell.x - fcell.x, lcell.y - fcell.y); ++i)
+                enemyField.f[fcell.x + dx * i][fcell.y + dy * i] = CELL_WHOLE_SHIP;
         }
     }
-    virtual void AddShips(void) {
-        field.addShip(1, 1, 1, 1);
-        field.addShip(3, 8, 3, 8);
-        field.addShip(7, 1, 7, 1);
-        field.addShip(8, 5, 8, 5);
+    virtual void AddShips(void) { 
+        field.addShip(Cell(1, 1), Cell(1, 1));
+        field.addShip(Cell(3, 8), Cell(3, 8));
+        field.addShip(Cell(7, 1), Cell(7, 1));
+        field.addShip(Cell(8, 5), Cell(8, 5));
 
-        field.addShip(1, 4, 1, 5);
-        field.addShip(6, 4, 6, 5);
-        field.addShip(8, 8, 9, 8);
+        field.addShip(Cell(1, 4), Cell(1, 5));
+        field.addShip(Cell(6, 4), Cell(6, 5));
+        field.addShip(Cell(8, 8), Cell(9, 8));
 
-        field.addShip(0, 7, 0, 9);
-        field.addShip(3, 0, 5, 0);
+        field.addShip(Cell(0, 7), Cell(0, 9));
+        field.addShip(Cell(3, 0), Cell(5, 0));
 
-        field.addShip(9, 0, 9, 3);
+        field.addShip(Cell(9, 0), Cell(9, 3));
     }
 
 public:
@@ -97,9 +94,9 @@ public:
         // if hit the ship
         else if (field.f[shot.x][shot.y] == CELL_WHOLE_SHIP) {
             field.f[shot.x][shot.y] = CELL_WOUNDED_SHIP;
-            field.decLives(shot.x, shot.y);
+            field.decLives(shot);
 
-            if (field.getLivesOfShipOn(shot.x, shot.y) == 0) {
+            if (field.getLivesOfShipOn(shot) == 0) {
                 return SHOTR_KILLED;
             }
 

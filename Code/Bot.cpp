@@ -70,41 +70,44 @@ void Bot::getMaxEmptySqOnField(const Field & field, const CellValue cell, int & 
 }
 
 Cell Bot::doShot(void) {
-    if (enemyField.f[lastShot.x][lastShot.y] != CELL_WOUNDED_SHIP &&
-        enemyField.f[penultShot.x][penultShot.y] == CELL_WOUNDED_SHIP)
-    {
-        lastShot = penultShot;
-    }
 
-    penultShot = lastShot;
+	if (enemyField.f[lastShot.x][lastShot.y] != CELL_WOUNDED_SHIP &&
+		enemyField.f[firstCellLastShip.x][firstCellLastShip.y] == CELL_WOUNDED_SHIP)
+	{
+		lastShot = firstCellLastShip;
+	}
 
-    if (enemyField.f[lastShot.x][lastShot.y] == CELL_WOUNDED_SHIP) {
-        if (lastShot.x > 0 && enemyField.f[lastShot.x - 1][lastShot.y] == CELL_NOT_KNOWN) {
-            --lastShot.x;
-        }
-        else if (lastShot.y > 0 && enemyField.f[lastShot.x][lastShot.y - 1] == CELL_NOT_KNOWN) {
-            --lastShot.y;
-        }
-        else if (lastShot.x + 1 < FL_FIELD_SIZE && enemyField.f[lastShot.x + 1][lastShot.y] == CELL_NOT_KNOWN) {
-            ++lastShot.x;
-        }
-        else if (lastShot.y + 1 < FL_FIELD_SIZE && enemyField.f[lastShot.x][lastShot.y + 1] == CELL_NOT_KNOWN) {
-            ++lastShot.y;
-        }
-    }
-    else {
-        srand((unsigned int)time(0) + rand());
+	if (enemyField.f[firstCellLastShip.x][firstCellLastShip.y] != CELL_WOUNDED_SHIP)
+		firstCellLastShip = lastShot;
 
-        while (true) {
-            lastShot.x = rand() % FL_FIELD_SIZE;
-            lastShot.y = rand() % FL_FIELD_SIZE;
+	if (enemyField.f[lastShot.x][lastShot.y] == CELL_WOUNDED_SHIP) {
+		if (lastShot.x > 0 && enemyField.f[lastShot.x - 1][lastShot.y] == CELL_NOT_KNOWN) {
+			--lastShot.x;
+		}
+		else if (lastShot.y > 0 && enemyField.f[lastShot.x][lastShot.y - 1] == CELL_NOT_KNOWN) {
+			--lastShot.y;
+		}
+		else if (lastShot.x + 1 < FL_FIELD_SIZE && enemyField.f[lastShot.x + 1][lastShot.y] == CELL_NOT_KNOWN) {
+			++lastShot.x;
+		}
+		else if (lastShot.y + 1 < FL_FIELD_SIZE && enemyField.f[lastShot.x][lastShot.y + 1] == CELL_NOT_KNOWN) {
+			++lastShot.y;
+		}
+	}
 
-            if (enemyField.f[lastShot.x][lastShot.y] == CELL_NOT_KNOWN)
-                break;
-        }
+	else {
+		srand(rand());
+		srand((unsigned int)time(0) + rand());
 
-        enemyField.f[lastShot.x][lastShot.y] = CELL_WATER;
-    }
+		while (true) {
+			lastShot.x = rand() % FL_FIELD_SIZE;
+			lastShot.y = rand() % FL_FIELD_SIZE;
 
+			if (enemyField.f[lastShot.x][lastShot.y] == CELL_NOT_KNOWN)
+				break;
+		}
+	}
+
+	enemyField.f[lastShot.x][lastShot.y] = CELL_WATER;
     return lastShot;
 };

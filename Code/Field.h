@@ -26,7 +26,7 @@ struct Field{
     Field() = delete;
     Field(CellValue baseCell);
     
-    int getLivesOfShipOn(int x, int y) const;
+    int getLivesOfShipOn(const Cell &) const;
 
     /*
     Add ship to field.
@@ -35,7 +35,7 @@ struct Field{
     x1 - last cell of ship by X axis.
     y1 - last cell of ship by Y axis.
     */
-    bool addShip(int x0, int y0, int x1, int y1);
+    bool addShip(Cell fcell, Cell lcell);
 
     /*
     Return ships count
@@ -45,10 +45,10 @@ struct Field{
     /* 
     Dec lives of ship on (x, y).
     */
-    void decLives(const int x, const int y);
+    void decLives(const Cell &);
 
-    void getFirstShipCell(int & x, int & y) const;
-    void getLastShipCell(int & x, int & y) const;
+    void getFirstShipCell(Cell &) const;
+    void getLastShipCell(Cell &) const;
 
 private:
     int lives;

@@ -6,7 +6,8 @@
 class Bot 
     : public Player
 {
-    Cell penultShot;
+	Cell firstCellLastShip;
+	bool fireWay[5] = {false, false, false, false, false};
 
     /*
     for next doShot() version 

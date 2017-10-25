@@ -11,50 +11,50 @@ Field::Field(CellValue baseCell = CELL_WATER)
         }
 }
 
-int Field::getLivesOfShipOn(int x, int y) const {
-    int lx = x;
-    int ly = y;
+int Field::getLivesOfShipOn(const Cell & cell) const {
+	Cell fcell(cell.x, cell.y);
+	Cell lcell(cell.x, cell.y);
 
-    getFirstShipCell(x, y);
-    getLastShipCell(lx, ly);
+    getFirstShipCell(fcell);
+    getLastShipCell(lcell);
 
     // get ship lives
     int result = 0;
 
-    while (x <= lx && y <= ly) {
-        if (f[x][y] == CELL_WHOLE_SHIP)
+    while (fcell.x <= lcell.x && fcell.y <= lcell.y) {
+        if (f[fcell.x][fcell.y] == CELL_WHOLE_SHIP)
             ++result;
 
-        if (x == lx)    ++y;
-        else            ++x;
+        if (fcell.x == lcell.x) ++fcell.y;
+        else                    ++fcell.x;
     }
 
     return result;
 }
 
-bool Field::addShip(int x0, int y0, int x1, int y1){
+bool Field::addShip(Cell fcell, Cell lcell){
     // check for corectness
     if (gameProcess)
         return false;
 
     // swap coord for order
-    if (x0 > x1) {
-        x0 ^= x1; x1 ^= x0; x0 ^= x1;
+    if (fcell.x > lcell.x) {
+		fcell.x ^= lcell.x; lcell.x ^= fcell.x; fcell.x ^= lcell.x;
     }
-    if (y0 > y1) {
-        y0 ^= y1; y1 ^= y0; y0 ^= y1;
+    if (fcell.y > lcell.y) {
+		fcell.y ^= lcell.y; lcell.y ^= fcell.y; fcell.y ^= lcell.y;
     }
 
-    if ((x0 != x1 && y0 != y1) || x0 < 0 || y0 < 0 ||
-        x1 >= FL_FIELD_SIZE || y1 >= FL_FIELD_SIZE ||
-        x1 - x0 >= FL_MAX_SHIP_LEN || y1 - y0 >= FL_MAX_SHIP_LEN) {
+    if ((fcell.x != lcell.x && fcell.y != lcell.y) || fcell.x < 0 || fcell.y < 0 ||
+		lcell.x >= FL_FIELD_SIZE || lcell.y >= FL_FIELD_SIZE ||
+		lcell.x - fcell.x >= FL_MAX_SHIP_LEN || lcell.y - fcell.y >= FL_MAX_SHIP_LEN) {
 
         return false;
     }
 
     // if ship already has been on this place
-    for (int x = x0 - 1; x < x1 + 2; ++x)
-        for (int y = y0 - 1; y < y1 + 2; ++y) {
+    for (int x = fcell.x - 1; x < lcell.x + 2; ++x)
+        for (int y = fcell.y - 1; y < lcell.y + 2; ++y) {
             if (x < 0 || y < 0) continue;
 
             if (f[x][y] == CELL_WHOLE_SHIP) {
@@ -63,16 +63,16 @@ bool Field::addShip(int x0, int y0, int x1, int y1){
         }
 
     // add ship to place
-    for (int i = 0; i < (x1 - x0 + y1 - y0) + 1; ++i) {
-        if (x0 != x1) {
-            f[x0 + i][y0] = CELL_WHOLE_SHIP;
+    for (int i = 0; i < (lcell.x - fcell.x + lcell.y - fcell.y) + 1; ++i) {
+        if (fcell.x != lcell.x) {
+            f[fcell.x + i][fcell.y] = CELL_WHOLE_SHIP;
         }
         else {
-            f[x0][y0 + i] = CELL_WHOLE_SHIP;
+            f[fcell.x][fcell.y + i] = CELL_WHOLE_SHIP;
         }
     }
 
-    lives += (x1 - x0 + y1 - y0) + 1;
+    lives += (lcell.x - fcell.x + lcell.y - fcell.y) + 1;
     ++shipsCount;
     return true;
 }
@@ -81,32 +81,32 @@ int Field::getShipsCount(void) const {
     return shipsCount;
 }
 
-void Field::decLives(const int x, const int y) {
+void Field::decLives(const Cell & cell) {
     --lives;
 
-    if (getLivesOfShipOn(x, y) == 0) {
+    if (getLivesOfShipOn(cell) == 0) {
         --shipsCount;
     }
 };
 
-void Field::getFirstShipCell(int & x, int & y) const {
+void Field::getFirstShipCell(Cell & cell) const {
     // move to the ship first cell
-    while (f[x][y] == CELL_WHOLE_SHIP || f[x][y] == CELL_WOUNDED_SHIP) {
-        if (x > 0 && (f[x - 1][y] == CELL_WHOLE_SHIP || f[x - 1][y] == CELL_WOUNDED_SHIP))
-            --x;
-        else if (y > 0 && (f[x][y - 1] == CELL_WHOLE_SHIP || f[x][y - 1] == CELL_WOUNDED_SHIP))
-            --y;
+    while (f[cell.x][cell.y] == CELL_WHOLE_SHIP || f[cell.x][cell.y] == CELL_WOUNDED_SHIP) {
+        if (cell.x > 0 && (f[cell.x - 1][cell.y] == CELL_WHOLE_SHIP || f[cell.x - 1][cell.y] == CELL_WOUNDED_SHIP))
+            --cell.x;
+        else if (cell.y > 0 && (f[cell.x][cell.y - 1] == CELL_WHOLE_SHIP || f[cell.x][cell.y - 1] == CELL_WOUNDED_SHIP))
+            --cell.y;
         else break;
     }
 }
 
-void Field::getLastShipCell(int & x, int & y) const {
+void Field::getLastShipCell(Cell & cell) const {
     // move to the ship last cell
-    while (f[x][y] == CELL_WHOLE_SHIP || f[x][y] == CELL_WOUNDED_SHIP) {
-        if (x+1 < FL_FIELD_SIZE && (f[x + 1][y] == CELL_WHOLE_SHIP || f[x + 1][y] == CELL_WOUNDED_SHIP))
-            ++x;
-        else if (y+1 < FL_FIELD_SIZE && (f[x][y + 1] == CELL_WHOLE_SHIP || f[x][y + 1] == CELL_WOUNDED_SHIP))
-            ++y;
+    while (f[cell.x][cell.y] == CELL_WHOLE_SHIP || f[cell.x][cell.y] == CELL_WOUNDED_SHIP) {
+        if (cell.x+1 < FL_FIELD_SIZE && (f[cell.x + 1][cell.y] == CELL_WHOLE_SHIP || f[cell.x + 1][cell.y] == CELL_WOUNDED_SHIP))
+            ++cell.x;
+        else if (cell.y+1 < FL_FIELD_SIZE && (f[cell.x][cell.y + 1] == CELL_WHOLE_SHIP || f[cell.x][cell.y + 1] == CELL_WOUNDED_SHIP))
+            ++cell.y;
         else break;
     }
 }

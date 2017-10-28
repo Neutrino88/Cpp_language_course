@@ -45,22 +45,20 @@ void printShotResult(ShotResult res) {
 }
 
 int main(int argc, char** argv) {
-	// Human vs Bot
+	// Player vs Player
 	if (argc == 1) {
-		Human pl1;
-		Bot pl2;
-
-		Game game(&pl1, &pl2);
-		game.start();
+		GameCreatorHumanBot creator;
+		Game* game = creator.Create();
+		game->start();
 	}
-	// Only Bot
+	// Bot mode
 	else {
 		Bot bot;
 		Cell shot;
 		ShotResult shotResult = SHOTR_MISSED;
 
 		bool flagDoShot = false;
-		if (!strcmp(argv[1], "0")) flagDoShot = true;
+		if (argc > 1 && !strcmp(argv[1], "0")) flagDoShot = true;
 
 		while (shotResult != SHOTR_LOSED) {
 			// do shot

@@ -63,6 +63,10 @@ int Player::shipsCount(void) {
 }
 
 ShotResult Player::getShot(const Cell & shot) {
+	// all ships are killed
+	if (field.getShipsCount() == 0) {
+		return SHOTR_LOSED;
+	}
 	// if coordinates isn't correct
 	if (shot.x < 0 || FL_FIELD_SIZE <= shot.x || shot.y < 0 || FL_FIELD_SIZE <= shot.y) {
 		return SHOTR_MISSED;
@@ -73,6 +77,7 @@ ShotResult Player::getShot(const Cell & shot) {
 		field.decLives(shot);
 
 		if (field.getLivesOfShipOn(shot) == 0) {
+			if (field.getShipsCount() == 0) return SHOTR_LOSED;
 			return SHOTR_KILLED;
 		}
 

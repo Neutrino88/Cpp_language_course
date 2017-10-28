@@ -1,7 +1,7 @@
 #pragma once
 
-#define FL_FIELD_SIZE 10 
-#define FL_MAX_SHIP_LEN 4 
+const size_t FL_FIELD_SIZE = 10;
+const size_t FL_MAX_SHIP_LEN = 4;
 
 enum CellValue {
     CELL_WATER,

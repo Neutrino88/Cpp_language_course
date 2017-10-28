@@ -21,7 +21,7 @@ class Bot
     void getMaxEmptySqOnField(const Field & field, const CellValue cell, int & resultX, int & resultY, int & resultSize) const;
 
 public:
-    Bot(std::string name);
+    Bot(void);
 
     Cell doShot(void);
 };

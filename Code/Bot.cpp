@@ -1,7 +1,7 @@
 #include "Bot.h"
 
-Bot::Bot(std::string name = "Bot")
-    : Player(name)
+Bot::Bot(void)
+    : Player()
 { }
 
 void Bot::getMaxEmptySqOnField(const Field & field, const CellValue cell, int & resultX, int & resultY, int & resultSize) const{

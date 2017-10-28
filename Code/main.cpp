@@ -45,37 +45,47 @@ void printShotResult(ShotResult res) {
 }
 
 int main(int argc, char** argv) {
-    Bot bot("Oleg's bot");
-    Cell shot;
-    ShotResult shotResult = SHOTR_MISSED;
-    
-    bool flagDoShot = false;
-    if (argc > 1 && !strcmp(argv[1], "0")) flagDoShot = true;
+	// Human vs Bot
+	if (argc == 1) {
+		Human pl1;
+		Bot pl2;
 
-    while (shotResult != SHOTR_LOSED) {
-        // do shot
-        if (flagDoShot) {
-            std::cout << toCoord(bot.doShot()) << std::endl;
-            shotResult = readLastShotResult();
+		Game game(&pl1, &pl2);
+		game.start();
+	}
+	// Only Bot
+	else {
+		Bot bot;
+		Cell shot;
+		ShotResult shotResult = SHOTR_MISSED;
 
-            if (shotResult != SHOTR_LOSED) {
-                bot.setLastShotResult(shotResult);
-            }
-        }
-        // get shot
-        else {
-            shot = readShot();
-            shotResult = bot.getShot(shot);
+		bool flagDoShot = false;
+		if (!strcmp(argv[1], "0")) flagDoShot = true;
 
-            if (bot.shipsCount() == 0)
-                shotResult = SHOTR_LOSED;
+		while (shotResult != SHOTR_LOSED) {
+			// do shot
+			if (flagDoShot) {
+				std::cout << toCoord(bot.doShot()) << std::endl;
+				shotResult = readLastShotResult();
 
-            printShotResult(shotResult);
-        }
+				if (shotResult != SHOTR_LOSED) {
+					bot.setLastShotResult(shotResult);
+				}
+			}
+			// get shot
+			else {
+				shot = readShot();
+				shotResult = bot.getShot(shot);
 
-        if (shotResult != SHOTR_KILLED && shotResult != SHOTR_WOUNDED)
-            flagDoShot = !flagDoShot;
-    }
+				if (bot.shipsCount() == 0)
+					shotResult = SHOTR_LOSED;
 
+				printShotResult(shotResult);
+			}
+
+			if (shotResult != SHOTR_KILLED && shotResult != SHOTR_WOUNDED)
+				flagDoShot = !flagDoShot;
+		}
+	}
     return 0;
 }

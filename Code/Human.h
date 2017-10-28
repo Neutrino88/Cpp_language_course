@@ -10,7 +10,7 @@ class Human
     void printFields(void) const;
 
 public:
-    Human(std::string name);
+    Human(void);
 
     Cell doShot(void);
 };

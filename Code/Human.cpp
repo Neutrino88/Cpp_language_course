@@ -1,7 +1,7 @@
 #include "Human.h"
 
-Human::Human(std::string name = "Human")
-    : Player(name)
+Human::Human(void)
+    : Player()
 { }
 
 void Human::printFields(void) const {

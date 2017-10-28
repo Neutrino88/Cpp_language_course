@@ -16,7 +16,7 @@ int Game::start(void) {
     do {
         shotFirstPl = !shotFirstPl;
         do {
-            std::cout << player1->getName() + ": " << std::endl;
+            std::cout << (shotFirstPl ? "Player 1:" : "Player 2:" ) << std::endl;
             
             shot = player1->doShot();
             shotResult = player2->getShot(shot);
@@ -34,15 +34,8 @@ int Game::start(void) {
         } while (ships1 > 0 && ships2 > 0 && (shotResult == CELL_WOUNDED_SHIP || shotResult == CELL_WHOLE_SHIP));
 
         // swap players
-        Player* buff = player1;
-        player1 = player2;
-        player2 = buff;
+		std::swap(player1, player2);
     } while (ships1 > 0 && ships2 > 0);
-
-    if (!shotFirstPl)
-        std::cout << player1->getName() << " won!" << std::endl;
-    else
-        std::cout << player2->getName() << " won!" << std::endl;
 
     return 0;
 }
